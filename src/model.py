@@ -14,6 +14,24 @@ class ContractingPath(nn.Module):
     def forward(self, input):
         return self.contracting(input)
     
+class ExpandingPath(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(ExpandingPath, self).__init__()
+        self.upsampling = ConvTranspose2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 2, padding = 0, stride = 2)
+
+        self.relu = ReLU()
+        
+        self.convolution = ContractingPath(in_channels, out_channels)
+
+    def forward(self, input, to_concat_x):
+
+        out = self.upsampling(input)
+        out = self.relu(out)
+        out = torch.cat((out, to_concat_x), dim = 1)
+        out = self.convolution(out)
+
+        return out
+    
 def clone_and_crop(out, cropped_size):
     feat_map = torch.clone(out)
     return feat_map.narrow(2, 0, cropped_size).narrow(3, 0, cropped_size)
@@ -30,21 +48,52 @@ class UNet(nn.Module):
         self.contracting_1 = ContractingPath(3, 64)
         self.maxpool_contracting = MaxPool2d(kernel_size= 2, stride= 2)
         self.contracting_2 = ContractingPath(64, 128)
-        # self.mlp = nn.Sequential(nn.Linear(hidden_d, num_classes), nn.Softmax(dim = -1))
+        self.contracting_3 = ContractingPath(128, 256)
+        self.contracting_4 = ContractingPath(256, 512)
+        self.contracting_5 = ContractingPath(512, 1024)
+
+        # expanding part of the path
+        self.expanding_1 = ExpandingPath(1024, 512)
+        self.expanding_2 = ExpandingPath(512, 256)
+        self.expanding_3 = ExpandingPath(256, 128)
+        self.expanding_4 = ExpandingPath(128, 64)
+
+        # final 1x1 convolution to map each 64-component feature vector to the desired number of classes
+        self.class_mapping = Conv2d(in_channels=64, out_channels=num_classes, kernel_size=1, padding=0)
         
     def forward(self, input):
 
         out = self.contracting_1(input)
-        feat_map_1_cropped = clone_and_crop(out, 200)
+        feat_map_1_cropped = clone_and_crop(out, 392)
         out = self.maxpool_contracting(out)
 
         out = self.contracting_2(out)
         feat_map_2_cropped = clone_and_crop(out, 200)
         out = self.maxpool_contracting(out)
 
+        out = self.contracting_3(out)
+        feat_map_3_cropped = clone_and_crop(out, 104)
+        out = self.maxpool_contracting(out)
+
+        out = self.contracting_4(out)
+        feat_map_4_cropped = clone_and_crop(out, 56)
+        out = self.maxpool_contracting(out)
+
+        # produces 1024x28x28 feature map
+        out = self.contracting_5(out)
+
+        # expansion path 1 - produces 512x52x52 feature map
+        out = self.expanding_1(out, feat_map_4_cropped)
+        
+        # rest of the expansion paths
+        out = self.expanding_2(out, feat_map_3_cropped)
+        out = self.expanding_3(out, feat_map_2_cropped)
+        out = self.expanding_4(out, feat_map_1_cropped)
+
+        # final 1x1 convolution to map each 64-component feature vector to the desired number of classes
+        out = self.class_mapping(out)
+
         return out
-        
-        
 
 if __name__ == "__main__":
     import numpy as np
@@ -59,5 +108,6 @@ if __name__ == "__main__":
 
     model = UNet()
     
-    # summary(model, (1, 3, 572, 572))
+    summary(model, (3, 572, 572))
+    print ()
     print (model.forward(X).shape)

@@ -17,7 +17,7 @@ def train(train_set, cfg, in_channels = 3, num_classes = 10):
     network.train()
 
     if cfg['show_model_summary']:
-        summary(network, (in_channels,224,224))
+        summary(network, (in_channels,572,572))
 
     optimizer = optim.SGD(network.parameters(), lr=cfg['train']['lr'], weight_decay=cfg['train']['weight_decay'])
 
