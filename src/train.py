@@ -19,7 +19,7 @@ def train(train_set, cfg, in_channels = 3, num_classes = 10):
     if cfg['show_model_summary']:
         summary(network, (in_channels,572,572))
 
-    optimizer = optim.SGD(network.parameters(), lr=cfg['train']['lr'], weight_decay=cfg['train']['weight_decay'])
+    optimizer = optim.Adam(network.parameters(), lr=cfg['train']['lr'], weight_decay=cfg['train']['weight_decay'])
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -53,8 +53,8 @@ if __name__ == "__main__":
     from src.dataset import get_load_data
     cfg = {"save_model_path": "model_weights/model_weights.pt",
            "epochs": 2, 'show_model_summary': True, 'train': {'lr': 0.001, 'weight_decay': 5e-5}}
-    train_set, test_set = get_load_data(root = "../data", dataset = "Flowers102")
-    train(train_set = train_set, cfg = cfg, in_channels = 3, num_classes = 102)
+    train_set, test_set = get_load_data(root = "../data", dataset = "VOCSegmentation")
+    train(train_set = train_set, cfg = cfg, in_channels = 3, num_classes = 20)
 
     # cannot use FashionMNIST because size needs to be 224x224x3 at the very least
     # train_set, test_set = get_load_data(root = "../data", dataset = "FashionMNIST")
