@@ -5,6 +5,12 @@ from torch.utils.data import DataLoader
 from sklearn.metrics import confusion_matrix, f1_score
 import pandas as pd
 
+def get_accuracy(preds, ground_truth):
+    ground_truth = ground_truth.squeeze(dim=1)
+    preds = preds.argmax(dim=1)
+    
+    return (preds.flatten()==ground_truth.flatten()).float().mean()
+
 def validation(model, val_set):
     """Simple validation workflow. Current implementation is for F1 score
 
