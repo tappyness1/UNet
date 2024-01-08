@@ -23,7 +23,7 @@ def validation(model, val_set):
         _type_: _description_
     """
     model.eval()
-    val_dataloader = DataLoader(val_set, batch_size=2, shuffle = True)
+    val_dataloader = DataLoader(val_set, batch_size=5, shuffle = True)
     loss_function = None
     y_true = []
     y_pred = []
@@ -31,6 +31,8 @@ def validation(model, val_set):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     model = model.to(device)
+    accuracies = []
+    losses = []
 
     with tqdm(val_dataloader) as tepoch:
 
@@ -40,19 +42,23 @@ def validation(model, val_set):
                 out = model(imgs.to(device))
 
             accuracy = get_accuracy(out, smnts.to(device))
-            energy_loss = loss_function(out, smnts.to(device))  
-            tepoch.set_postfix(accuracy=accuracy.item(), loss=energy_loss.item())  
+            loss = energy_loss(out, smnts.to(device))  
+            tepoch.set_postfix(accuracy=accuracy.item(), loss=loss.item())  
+            losses.append(loss.item())
+            accuracies.append(accuracy.item())
+
+    print (f"Accuracy: {sum(accuracies)/len(accuracies)}")
+    print (f"Validation Loss: {sum(losses)/len(losses)}")
 
     # cm = pd.DataFrame(confusion_matrix(y_true, y_pred))
     # cm.to_csv("val_results/results.csv")
     # return f1_score(y_true, y_pred, average = 'weighted']
-    
 
 if __name__ == "__main__":
     
     from src.dataset import get_load_data
 
-    _, val_set = get_load_data(root = "../data", dataset = "Flowers102")
+    _, val_set = get_load_data(root = "../data", dataset = "VOCSegmentation")
     trained_model_path = "model_weights/model_weights.pt"
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     model = torch.load(trained_model_path, map_location=torch.device(device))
