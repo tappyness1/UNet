@@ -91,9 +91,10 @@ if __name__ == "__main__":
     # plt.imshow(img.squeeze(), cmap="gray")
     # plt.show()
 
-    train, test = get_load_data(root = "../data", dataset = "VOCSegmentation", download = False)  
-    img, smnt = train[12] 
-    print (smnt)
+    # # for local testing
+    # train, test = get_load_data(root = "../data", dataset = "VOCSegmentation", download = False)  
+    # img, smnt = train[12] 
+    # print (smnt)
 
     # # for gcp or whatever
-    # train, test = get_load_data(root = "./data", dataset = "Flowers102", download = True)
+    train, test = get_load_data(root = "../data", dataset = "VOCSegmentation", download = True)

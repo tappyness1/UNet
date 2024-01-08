@@ -19,8 +19,8 @@ def train(train_set, cfg, in_channels = 3, num_classes = 10):
 
     network.train()
 
-    if cfg['show_model_summary']:
-        summary(network, (in_channels,572,572))
+    # if cfg['show_model_summary']:
+    #     summary(network, (in_channels,572,572))
 
     optimizer = optim.Adam(network.parameters(), lr=cfg['train']['lr'], weight_decay=cfg['train']['weight_decay'])
 
@@ -55,8 +55,8 @@ if __name__ == "__main__":
     cfg = {"save_model_path": "model_weights/model_weights.pt",
            'show_model_summary': True, 
            'train': {"epochs": 2, 'lr': 0.001, 'weight_decay': 5e-5}}
-    
-    train_set, test_set = get_load_data(root = "../data", dataset = "VOCSegmentation")
+
+    train_set, _ = get_load_data(root = "../data", dataset = "VOCSegmentation")
     train(train_set = train_set, cfg = cfg, in_channels = 3, num_classes = 20)
 
     # cannot use FashionMNIST because size needs to be 224x224x3 at the very least
