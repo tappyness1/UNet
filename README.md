@@ -4,11 +4,18 @@
 Just a simple implementation based on the UNet which is the convolutional neural network used in Medical Field and Denoising and hence was used by Latent Diffusion Models. Hence, pretty important and my whole impetus for trying to implement it. 
 
 ## What has been done 
-Able to get the downsampling part, which admittedly is the easy part. It's upsampling part that's the problem because we're fighting against gravity or something. 
+1. Set up the Architecture
+1. Set up the dataset and dataloader
+1. Set up the training, which could be better implemented admittedly.
+1. Set up validation, but only takes accuracy and loss. 
+
+## What else needs to be done
+1. Visualise results of model
+1. Update the training to include validation
 
 ## How to run 
 
-Make sure you change the directory of your data. I used Flowers102 dataset hence 102 classes. 
+Make sure you change the directory of your data. I used the VOCSegmentation dataset which has 20 classes. 
 
 ```
 python -m src.main

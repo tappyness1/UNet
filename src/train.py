@@ -19,14 +19,14 @@ def train(train_set, cfg, in_channels = 3, num_classes = 10):
 
     network.train()
 
-    # if cfg['show_model_summary']:
-    #     summary(network, (in_channels,572,572))
-
     optimizer = optim.Adam(network.parameters(), lr=cfg['train']['lr'], weight_decay=cfg['train']['weight_decay'])
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     network = network.to(device)
+
+    if cfg['show_model_summary']:
+        summary(network, (in_channels,572,572))
 
     train_dataloader = DataLoader(train_set, batch_size=4, shuffle = True)
     

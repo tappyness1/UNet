@@ -5,7 +5,7 @@ save_model_path: model_weights/model_weights.pt
 
 dataset:
   root: ../data # for GCP - use "data/""
-  dataset: VOCSegmentation # Flowers102 or FashionMNIST
+  dataset: VOCSegmentation # for UNET, use VOCSegmentation dataset
 
 train:
   epochs: 2
