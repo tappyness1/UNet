@@ -4,6 +4,7 @@ from tqdm import tqdm
 from torch.utils.data import DataLoader
 from sklearn.metrics import confusion_matrix, f1_score
 import pandas as pd
+from src.loss_function import energy_loss
 
 def get_accuracy(preds, ground_truth):
     ground_truth = ground_truth.squeeze(dim=1)
@@ -22,8 +23,8 @@ def validation(model, val_set):
         _type_: _description_
     """
     model.eval()
-    val_dataloader = DataLoader(val_set, batch_size=20)
-    loss_function = nn.CrossEntropyLoss()
+    val_dataloader = DataLoader(val_set, batch_size=2, shuffle = True)
+    loss_function = None
     y_true = []
     y_pred = []
 
@@ -33,19 +34,19 @@ def validation(model, val_set):
 
     with tqdm(val_dataloader) as tepoch:
 
-        for imgs, labels in tepoch:
-
-            y_true.extend(labels.numpy())
+        for imgs, smnts in tepoch:
             
             with torch.no_grad():
                 out = model(imgs.to(device))
 
-            y_pred.extend(torch.argmax(out,1).cpu().numpy())
-            loss = loss_function(out, labels.to(device))    
+            accuracy = get_accuracy(out, smnts.to(device))
+            energy_loss = loss_function(out, smnts.to(device))  
+            tepoch.set_postfix(accuracy=accuracy.item(), loss=energy_loss.item())  
 
-    cm = pd.DataFrame(confusion_matrix(y_true, y_pred))
-    cm.to_csv("val_results/results.csv")
-    return f1_score(y_true, y_pred, average = 'weighted')
+    # cm = pd.DataFrame(confusion_matrix(y_true, y_pred))
+    # cm.to_csv("val_results/results.csv")
+    # return f1_score(y_true, y_pred, average = 'weighted']
+    
 
 if __name__ == "__main__":
     

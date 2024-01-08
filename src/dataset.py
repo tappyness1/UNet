@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import Dataset
 from torchvision import datasets
-from torchvision.transforms import Compose, Resize, ToTensor
+from torchvision.transforms import Compose, Resize, ToTensor, PILToTensor
 import matplotlib.pyplot as plt
 
 
@@ -72,7 +72,7 @@ def get_load_data(root = "data", dataset = "FashionMNIST", download = False):
             image_set ="train",
             download=download,
             transform=Compose([Resize((572, 572)),ToTensor()]),
-            # target_transform = Compose([Resize((227, 227)),ToTensor()])
+            target_transform = Compose([Resize((388, 388)),ToTensor()])
         )
 
         test_data = datasets.VOCSegmentation(
@@ -80,7 +80,7 @@ def get_load_data(root = "data", dataset = "FashionMNIST", download = False):
             image_set ="val",
             download=download,
             transform=Compose([Resize((572, 572)), ToTensor()]),
-            # target_transform = Compose([Resize((227, 227)),ToTensor()])
+            target_transform = Compose([Resize((388, 388)),PILToTensor()])
         )
     return training_data, test_data
 

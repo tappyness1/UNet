@@ -1,6 +1,7 @@
 import torch
 from torch.nn import CrossEntropyLoss
 from torch.nn.functional import one_hot
+import numpy as np
 
 def one_hot_encode(smnt: torch.Tensor, num_classes) -> torch.Tensor:
     
