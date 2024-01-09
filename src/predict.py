@@ -3,8 +3,9 @@ import torch
 import pandas as pd
 
 
-def predict(model, img):
+def predict(model, imgs):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model.eval()
     model.to(device)
-    return torch.argmax(model(img))
+    preds = model(imgs)
+    return torch.argmax(preds, dim = 1)

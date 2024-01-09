@@ -8,9 +8,12 @@ class ContractingPath(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(ContractingPath, self).__init__()
         self.contracting = nn.Sequential(Conv2d(in_channels= in_channels, out_channels= out_channels, kernel_size= 3, padding= 0),
-                                            ReLU(),
-                                            Conv2d(in_channels= out_channels, out_channels= out_channels, kernel_size= 3, padding= 0),
-                                            ReLU())
+                                         BatchNorm2d(out_channels),
+                                         ReLU(),
+                                         Conv2d(in_channels= out_channels, out_channels= out_channels, kernel_size= 3, padding= 0),
+                                         BatchNorm2d(out_channels),
+                                         ReLU())
+                                        
     def forward(self, input):
         return self.contracting(input)
     
