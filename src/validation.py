@@ -50,6 +50,8 @@ def validation(model, val_set):
     print (f"Accuracy: {sum(accuracies)/len(accuracies)}")
     print (f"Validation Loss: {sum(losses)/len(losses)}")
 
+    return sum(accuracies)/len(accuracies), sum(losses)/len(losses)
+
     # cm = pd.DataFrame(confusion_matrix(y_true, y_pred))
     # cm.to_csv("val_results/results.csv")
     # return f1_score(y_true, y_pred, average = 'weighted']

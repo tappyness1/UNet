@@ -36,19 +36,6 @@ def get_load_data(root = "data", dataset = "FashionMNIST", download = False):
             download=download,
             transform=Compose([Resize((572,572)), ToTensor()])
         )
-    # elif dataset == "Cityscapes_semantic_segmentation":
-    #     training_data = dataset.Cityscapes(
-    #         root=root,
-    #         split="train",
-    #         target_type = "semantic",
-    #         transform=Compose([Resize((572,572)), ToTensor()]) 
-    #     )
-    #     test_data = dataset.Cityscapes(
-    #         root=root,
-    #         split="train",
-    #         target_type = "semantic",
-    #         transform=Compose([Resize((572,572)), ToTensor()]) 
-    #     )
     elif dataset == "VOCDetection":
         training_data = datasets.VOCDetection(
             root=root,

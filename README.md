@@ -20,4 +20,3 @@ Make sure you change the directory of your data. I used the VOCSegmentation data
 ```
 python -m src.main
 ```
-
