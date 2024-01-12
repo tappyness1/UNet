@@ -30,7 +30,7 @@ def train(train_set, cfg, in_channels = 3, num_classes = 10):
     if cfg['show_model_summary']:
         summary(network, (in_channels,572,572))
 
-    train_dataloader = DataLoader(train_set, batch_size=4, shuffle = True)
+    train_dataloader = DataLoader(train_set, batch_size=5, shuffle = True)
     
     for epoch in range(cfg['train']['epochs']):
         print (f"Epoch {epoch + 1}:")
@@ -39,6 +39,7 @@ def train(train_set, cfg, in_channels = 3, num_classes = 10):
             for imgs, smnts in tepoch:
                 # print (imgs.shape)
                 # smnts = torch.where(smnts == 255, 0, smnts)
+                smnts = smnts * 255
                 optimizer.zero_grad() 
                 out = network(imgs.to(device))
                 loss = energy_loss(out, smnts.to(device))
