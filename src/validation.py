@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from sklearn.metrics import confusion_matrix, f1_score
 import pandas as pd
 from src.loss_function import energy_loss
+from sklearn.metrics import confusion_matrix
 
 def get_accuracy(preds, ground_truth):
     ground_truth = ground_truth.squeeze(dim=1)
@@ -41,14 +42,18 @@ def validation(model, val_set):
             with torch.no_grad():
                 out = model(imgs.to(device))
 
+            smnts = torch.where(smnts==255, 0, smnts)
             accuracy = get_accuracy(out, smnts.to(device))
             loss = energy_loss(out, smnts.to(device))  
             tepoch.set_postfix(accuracy=accuracy.item(), loss=loss.item())  
             losses.append(loss.item())
             accuracies.append(accuracy.item())
+            y_pred.extend(out.argmax(dim = 1).flatten().cpu().tolist())
+            y_true.extend(smnts.squeeze(dim=1).flatten().tolist())
 
     print (f"Accuracy: {sum(accuracies)/len(accuracies)}")
     print (f"Validation Loss: {sum(losses)/len(losses)}")
+    print (confusion_matrix(y_true,y_pred))
 
     return sum(accuracies)/len(accuracies), sum(losses)/len(losses)
 
