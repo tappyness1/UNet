@@ -10,6 +10,8 @@ from omegaconf import DictConfig, OmegaConf
 from src.loss_function import energy_loss
 from src.dataset import get_load_data
 
+def calc_weights(train_set):
+    pass
 
 def train(train_set, cfg, in_channels = 3, num_classes = 10):
 
@@ -36,6 +38,7 @@ def train(train_set, cfg, in_channels = 3, num_classes = 10):
         with tqdm(train_dataloader) as tepoch:
             for imgs, smnts in tepoch:
                 # print (imgs.shape)
+                # smnts = torch.where(smnts == 255, 0, smnts)
                 optimizer.zero_grad() 
                 out = network(imgs.to(device))
                 loss = energy_loss(out, smnts.to(device))

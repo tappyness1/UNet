@@ -48,18 +48,21 @@ def validation(model, val_set):
             tepoch.set_postfix(accuracy=accuracy.item(), loss=loss.item())  
             losses.append(loss.item())
             accuracies.append(accuracy.item())
+            # out_flat = smnts.squeeze(dim=1).flatten().tolist()
             y_pred.extend(out.argmax(dim = 1).flatten().cpu().tolist())
             y_true.extend(smnts.squeeze(dim=1).flatten().tolist())
 
     print (f"Accuracy: {sum(accuracies)/len(accuracies)}")
     print (f"Validation Loss: {sum(losses)/len(losses)}")
-    print (confusion_matrix(y_true,y_pred))
+    cm = pd.DataFrame(confusion_matrix(y_true, y_pred))
+    print (cm)
+    # print (f"F1 Score: f1_score(y_true, y_pred, average = 'weighted')")
 
     return sum(accuracies)/len(accuracies), sum(losses)/len(losses)
 
     # cm = pd.DataFrame(confusion_matrix(y_true, y_pred))
     # cm.to_csv("val_results/results.csv")
-    # return f1_score(y_true, y_pred, average = 'weighted']
+    # return f1_score(y_true, y_pred, average = 'weighted')
 
 if __name__ == "__main__":
     
