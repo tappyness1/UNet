@@ -28,10 +28,17 @@ def validation(model, val_set):
     loss_function = None
     y_true = []
     y_pred = []
+    weight = torch.Tensor([1.33524479, 142.03737758, 354.33279529, 121.55201728,
+       170.52369266, 173.57602029,  59.18592147,  73.39980364,
+        39.04301533,  91.24823152, 124.53864632,  80.32893704,
+        62.08797479, 112.79122179,  92.20176115,  21.86262213,
+       161.68561906, 118.22250115,  72.47050034,  65.89660941,
+       116.10541954])
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     model = model.to(device)
+    weight = weight.to(device)
     accuracies = []
     losses = []
 
@@ -46,7 +53,7 @@ def validation(model, val_set):
             smnts = torch.where(smnts==255, 0, smnts)
 
             accuracy = get_accuracy(out, smnts.to(device))
-            loss = energy_loss(out, smnts.to(device))  
+            loss = energy_loss(out, smnts.to(device), weight = weight)  
             tepoch.set_postfix(accuracy=accuracy.item(), loss=loss.item())  
             losses.append(loss.item())
             accuracies.append(accuracy.item())

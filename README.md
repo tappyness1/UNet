@@ -8,10 +8,10 @@ Just a simple implementation based on the UNet which is the convolutional neural
 1. Set up the dataset and dataloader
 1. Set up the training, which could be better implemented admittedly.
 1. Set up validation, but only takes accuracy and loss. 
+1. Results visualisation
 
 ## What else needs to be done
-1. Visualise results of model
-1. Update the training to include validation
+1. Remove hardcoded weights
 
 ## How to run 
 
