@@ -9,8 +9,8 @@ dataset:
 
 train:
   epochs: 2
-  lr: 3e-4
-  weight_decay: 5e-5
+  lr: 0.005
+  weight_decay: 5e-4
 
 show_model_summary: True
 num_classes : 20

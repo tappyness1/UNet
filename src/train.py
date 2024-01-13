@@ -9,9 +9,22 @@ import hydra
 from omegaconf import DictConfig, OmegaConf
 from src.loss_function import energy_loss
 from src.dataset import get_load_data
+import numpy as np
 
 def calc_weights(train_set):
-    pass
+    instances = []
+    for i in range(len(train)):
+        to_extend = train_set[i][1]
+        to_extend *= 255
+        instances.extend(to_extend.type(torch.int8).flatten().tolist())
+
+    instances = np.array(instances)
+    instances += 1
+    counts = []
+    for i in range(22):
+        counts.append(np.count_nonzero(instances == i))
+        
+    counts = np.array(counts)
 
 def train(train_set, cfg, in_channels = 3, num_classes = 10):
 
@@ -30,7 +43,7 @@ def train(train_set, cfg, in_channels = 3, num_classes = 10):
     if cfg['show_model_summary']:
         summary(network, (in_channels,572,572))
 
-    train_dataloader = DataLoader(train_set, batch_size=5, shuffle = True)
+    train_dataloader = DataLoader(train_set, batch_size=8, shuffle = True)
     
     for epoch in range(cfg['train']['epochs']):
         print (f"Epoch {epoch + 1}:")
@@ -38,8 +51,10 @@ def train(train_set, cfg, in_channels = 3, num_classes = 10):
         with tqdm(train_dataloader) as tepoch:
             for imgs, smnts in tepoch:
                 # print (imgs.shape)
-                # smnts = torch.where(smnts == 255, 0, smnts)
+
                 smnts = smnts * 255
+                smnts = torch.where(smnts == 255, 0, smnts)
+                
                 optimizer.zero_grad() 
                 out = network(imgs.to(device))
                 loss = energy_loss(out, smnts.to(device))

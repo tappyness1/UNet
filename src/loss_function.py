@@ -39,7 +39,7 @@ def energy_loss(pred = torch.Tensor, ground_truth= torch.Tensor) -> torch.Tensor
     if ground_truth.dtype != torch.int64:
         ground_truth = ground_truth.type(torch.int64)
 
-    loss = torch.nn.CrossEntropyLoss(ignore_index=255)
+    loss = torch.nn.CrossEntropyLoss()
 
     return loss(pred, ground_truth.squeeze(1))
 

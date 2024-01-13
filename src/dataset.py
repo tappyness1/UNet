@@ -67,7 +67,7 @@ def get_load_data(root = "data", dataset = "FashionMNIST", download = False):
             image_set ="val",
             download=download,
             transform=Compose([Resize((572, 572)), ToTensor()]),
-            target_transform = Compose([Resize((388, 388)),PILToTensor()])
+            target_transform = Compose([Resize((388, 388)),ToTensor()])
         )
     return training_data, test_data
 

@@ -42,16 +42,15 @@ def validation(model, val_set):
             with torch.no_grad():
                 out = model(imgs.to(device))
             
-            # damn you PILToTensor
             smnts *= 255
-            smnts += 1
             smnts = torch.where(smnts==255, 0, smnts)
-            
+
             accuracy = get_accuracy(out, smnts.to(device))
             loss = energy_loss(out, smnts.to(device))  
             tepoch.set_postfix(accuracy=accuracy.item(), loss=loss.item())  
             losses.append(loss.item())
             accuracies.append(accuracy.item())
+            
             # out_flat = smnts.squeeze(dim=1).flatten().tolist()
             y_pred.extend(out.argmax(dim = 1).flatten().cpu().tolist())
             y_true.extend(smnts.squeeze(dim=1).flatten().tolist())
