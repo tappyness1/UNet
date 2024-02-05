@@ -69,8 +69,8 @@ def train(train_set, cfg, in_channels = 3, num_classes = 10):
 
                 optimizer.zero_grad() 
                 out = network(imgs.to(device))
-                loss = energy_loss(out, smnts.to(device), weight = weights)
-                # loss = dice_loss(out, smnts.to(device), multiclass = True)
+                # loss = energy_loss(out, smnts.to(device), weight = weights)
+                loss = dice_loss(out, smnts.to(device), multiclass = True)
                 loss.backward()
                 optimizer.step()
                 tepoch.set_postfix(loss=loss.item())
