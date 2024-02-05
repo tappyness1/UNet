@@ -7,10 +7,10 @@ import numpy as np
 class ContractingPath(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(ContractingPath, self).__init__()
-        self.contracting = nn.Sequential(Conv2d(in_channels= in_channels, out_channels= out_channels, kernel_size= 3, padding= 1),
+        self.contracting = nn.Sequential(Conv2d(in_channels= in_channels, out_channels= out_channels, kernel_size= 3, padding= 0),
                                          BatchNorm2d(out_channels),
                                          ReLU(),
-                                         Conv2d(in_channels= out_channels, out_channels= out_channels, kernel_size= 3, padding= 1),
+                                         Conv2d(in_channels= out_channels, out_channels= out_channels, kernel_size= 3, padding= 0),
                                          BatchNorm2d(out_channels),
                                          ReLU())
                                         
@@ -43,7 +43,7 @@ def clone_and_crop(out, cropped_size):
 
 class UNet(nn.Module):
 
-    def __init__(self, num_classes= 20):
+    def __init__(self, img_size = 572, num_classes= 20):
         super(UNet, self).__init__()
 
         # repeated application of two 3x3 convolutions (unpadded convolutions) with 64 out channels, 
@@ -69,31 +69,31 @@ class UNet(nn.Module):
     def forward(self, input):
 
         out = self.contracting_1(input)
-        feat_map_1 = torch.clone(out)
+        feat_map_1_cropped = clone_and_crop(out, 392)
         out = self.maxpool_contracting(out)
 
         out = self.contracting_2(out)
-        feat_map_2 = torch.clone(out)
+        feat_map_2_cropped = clone_and_crop(out, 200)
         out = self.maxpool_contracting(out)
 
         out = self.contracting_3(out)
-        feat_map_3 = torch.clone(out)
+        feat_map_3_cropped = clone_and_crop(out, 104)
         out = self.maxpool_contracting(out)
 
         out = self.contracting_4(out)
-        feat_map_4 = torch.clone(out)
+        feat_map_4_cropped = clone_and_crop(out, 56)
         out = self.maxpool_contracting(out)
 
         # produces 1024x28x28 feature map
         out = self.contracting_5(out)
 
         # expansion path 1 - produces 512x52x52 feature map
-        out = self.expanding_1(out, feat_map_4)
+        out = self.expanding_1(out, feat_map_4_cropped)
         
         # rest of the expansion paths
-        out = self.expanding_2(out, feat_map_3)
-        out = self.expanding_3(out, feat_map_2)
-        out = self.expanding_4(out, feat_map_1)
+        out = self.expanding_2(out, feat_map_3_cropped)
+        out = self.expanding_3(out, feat_map_2_cropped)
+        out = self.expanding_4(out, feat_map_1_cropped)
 
         # final 1x1 convolution to map each 64-component feature vector to the desired number of classes
         out = self.class_mapping(out)
@@ -108,13 +108,13 @@ if __name__ == "__main__":
     np.random.seed(42)
     torch.manual_seed(42)    
 
-    X = np.random.rand(5, 3, 512, 512).astype('float32')
+    X = np.random.rand(5, 3, 572, 572).astype('float32')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     X = torch.tensor(X).to(device)
 
     model = UNet()
     model = model.to(device)
     
-    summary(model, (3, 512, 512))
+    summary(model, (3, 572, 572))
     print ()
     print (model.forward(X).shape)

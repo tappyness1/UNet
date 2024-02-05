@@ -58,16 +58,16 @@ def get_load_data(root = "data", dataset = "FashionMNIST", download = False):
             root=root,
             image_set ="train",
             download=download,
-            transform=Compose([Resize((572, 572)),ToTensor()]),
-            target_transform = Compose([Resize((388, 388)),ToTensor()])
+            transform=Compose([Resize((512, 512)),ToTensor()]),
+            target_transform = Compose([Resize((512, 512)),ToTensor()])
         )
 
         test_data = datasets.VOCSegmentation(
             root=root,
             image_set ="val",
             download=download,
-            transform=Compose([Resize((572, 572)), ToTensor()]),
-            target_transform = Compose([Resize((388, 388)),ToTensor()])
+            transform=Compose([Resize((512, 512)), ToTensor()]),
+            target_transform = Compose([Resize((512, 512)),ToTensor()])
         )
     return training_data, test_data
 
