@@ -12,6 +12,7 @@ train:
   lr: 1e-5 # 0.001
   weight_decay: 1e-8 # 5e-4
   momentum: 0.999
+  loss_function: dice_loss
 
 show_model_summary: True
 num_classes : 20

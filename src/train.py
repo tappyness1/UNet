@@ -33,8 +33,11 @@ def calc_weights(train_set):
 def train(train_set, cfg, in_channels = 3, num_classes = 10):
 
     loss_function = None # using energy_loss instead
+
+    if cfg['train']['loss_function'] == 'energy_loss':
        
-    weights = calc_weights(train_set)
+       weights = calc_weights(train_set)
+       weights = weights.to(device)
     
     # network = UNet(img_size = 572, num_classes = num_classes + 1)
     network = UNet(num_classes = num_classes + 1)
@@ -48,7 +51,7 @@ def train(train_set, cfg, in_channels = 3, num_classes = 10):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     network = network.to(device)
-    weights = weights.to(device)
+    
 
     if cfg['show_model_summary']:
         summary(network, (in_channels,512,512))
@@ -69,8 +72,10 @@ def train(train_set, cfg, in_channels = 3, num_classes = 10):
 
                 optimizer.zero_grad() 
                 out = network(imgs.to(device))
-                # loss = energy_loss(out, smnts.to(device), weight = weights)
-                loss = dice_loss(out, smnts.to(device), multiclass = True)
+                if cfg['train']['loss_function'] == 'energy_loss':
+                    loss = energy_loss(out, smnts.to(device), weight = weights)
+                else:
+                    loss = dice_loss(out, smnts.to(device), multiclass = True)
                 loss.backward()
                 optimizer.step()
                 tepoch.set_postfix(loss=loss.item())
@@ -86,7 +91,9 @@ if __name__ == "__main__":
 
     cfg = {"save_model_path": "model_weights/model_weights.pt",
            'show_model_summary': True, 
-           'train': {"epochs": 5, 'lr': 1e-3, 'weight_decay': 1e-8, 'momentum':0.999}}
+           'train': {"epochs": 20, 'lr': 1e-3, 
+                     'weight_decay': 1e-8, 'momentum':0.999, 
+                     'loss_function': 'dice_loss'}}
     
     train_set, _ = get_load_data(root = "../data", dataset = "VOCSegmentation")
     train(train_set = train_set, cfg = cfg, in_channels = 3, num_classes = 20)
@@ -96,7 +103,7 @@ if __name__ == "__main__":
     # train(epochs = 1, train_set = train_set, in_channels = 1, num_classes = 10)
     
 
-    # TODO: modify hardcoded weights
+    # these are the hardcoded weight
     weights = torch.Tensor([1.33524479, 142.03737758, 354.33279529, 121.55201728,
        170.52369266, 173.57602029,  59.18592147,  73.39980364,
         39.04301533,  91.24823152, 124.53864632,  80.32893704,

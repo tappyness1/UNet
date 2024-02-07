@@ -79,6 +79,7 @@ def dice_loss(input: Tensor, target: Tensor, multiclass: bool = False):
 def prep_input(input: Tensor):
     # Prepare input for dice loss
     input = torch.softmax(input, dim = 1).float()
+    
     return input
 
 def prep_target(target: Tensor, num_classes: int):
