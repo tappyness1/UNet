@@ -21,7 +21,7 @@ def one_hot_encode(smnt: torch.Tensor, num_classes) -> torch.Tensor:
 
     return smnt_one_hot
 
-def energy_loss(pred = torch.Tensor, ground_truth= torch.Tensor, weight = torch.Tensor) -> torch.Tensor:
+def energy_loss(pred = torch.Tensor, ground_truth= torch.Tensor, weight = torch.Tensor, multiclass = False) -> torch.Tensor:
     """Energy loss
     Supposed to follow the following steps
     1. Softmax function along the channels
@@ -39,8 +39,14 @@ def energy_loss(pred = torch.Tensor, ground_truth= torch.Tensor, weight = torch.
     """
     if ground_truth.dtype != torch.int64:
         ground_truth = ground_truth.type(torch.int64)
+        
+    if multiclass:
+        loss = torch.nn.CrossEntropyLoss(weight = weight)
+    else:
+        loss = torch.nn.BCEWithLogitsLoss(weight = weight)
+        pred = pred.squeeze(1)
+        ground_truth = ground_truth.type(torch.float32)
 
-    loss = torch.nn.CrossEntropyLoss(weight = weight)
 
     return loss(pred, ground_truth.squeeze(1))
 
@@ -66,9 +72,11 @@ def multiclass_dice_coeff(input: Tensor, target: Tensor, reduce_batch_first: boo
 def dice_loss(input: Tensor, target: Tensor, multiclass: bool = False):
     # Dice loss (objective to minimize) between 0 and 1
     fn = multiclass_dice_coeff if multiclass else dice_coeff
-    num_classes = input.size(1)
-    input = prep_input(input)
-    target = prep_target(target, num_classes = num_classes)
+    
+    if multiclass:
+        num_classes = input.size(1)
+        input = prep_input(input)
+        target = prep_target(target, num_classes = num_classes)
 
     # below is just playing with if you remove the background class in your dice loss
     input = input[:, 1:, :, :]

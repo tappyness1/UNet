@@ -10,8 +10,8 @@ def train_model(cfg : DictConfig):
 
     torch.manual_seed(42)
     train_set, test_set = get_load_data(root = cfg["dataset"]["root"], dataset = cfg["dataset"]["dataset"])
-    network = train(train_set, cfg, in_channels = 3, num_classes = cfg["num_classes"])
-    accuracy, loss = validation(network, test_set)
+    network = train(train_set, test_set, cfg, in_channels = 3, num_classes = cfg["num_classes"])
+    accuracy, loss = validation(network, test_set, cfg)
     return accuracy, loss
 
 @hydra.main(version_base = None, config_path="../cfg", config_name="cfg_hptuning.yaml")

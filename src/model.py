@@ -43,7 +43,7 @@ def clone_and_crop(out, cropped_size):
 
 class UNet(nn.Module):
 
-    def __init__(self, num_classes= 20):
+    def __init__(self, num_classes= 21):
         super(UNet, self).__init__()
 
         # repeated application of two 3x3 convolutions (unpadded convolutions) with 64 out channels, 
