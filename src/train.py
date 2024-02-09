@@ -105,7 +105,7 @@ if __name__ == "__main__":
 
     cfg = {"save_model_path": "model_weights/model_weights.pt",
            'show_model_summary': True, 
-           'train': {"epochs": 3, 'lr': 1e-3, 
+           'train': {"epochs": 10, 'lr': 1e-3, 
                      'weight_decay': 1e-8, 'momentum':0.999, 
                      'loss_function': 'energy_loss', 
                      'subset': False, # set False if not intending to use subset. Set to 20 or something for small dataset experimentation/debugging

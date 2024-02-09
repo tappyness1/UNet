@@ -78,9 +78,9 @@ def dice_loss(input: Tensor, target: Tensor, multiclass: bool = False):
         input = prep_input(input)
         target = prep_target(target, num_classes = num_classes)
 
-    # below is just playing with if you remove the background class in your dice loss
-    input = input[:, 1:, :, :]
-    target = target[:, 1:, :, :]
+        # below is just playing with if you remove the background class in your dice loss
+        input = input[:, 1:, :, :]
+        target = target[:, 1:, :, :]
     
     return 1 - fn(input, target, reduce_batch_first=True)
 
