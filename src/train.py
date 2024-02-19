@@ -92,7 +92,7 @@ def train(train_set, val_set, cfg, in_channels = 3, num_classes = 10):
         
         _, loss = validation(network, val_set, cfg)
         scheduler.step(loss)
-        network.eval()
+        network.train()
         
     print("training done")
     torch.save(network, cfg['save_model_path'])
