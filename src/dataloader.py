@@ -25,7 +25,6 @@ class BasicDataset(Dataset):
         mask = transform(Image.open(os.path.join(self.mask_dir, self.masks[idx]))).to(torch.float32)
         img = transform(Image.open(os.path.join(self.images_dir, self.images[idx]))).to(torch.float32)
         img /= 255
-        mask /= 255
         return [img, mask]
 
 if __name__ == "__main__":

@@ -5,8 +5,8 @@ import torch
 from tqdm import tqdm
 from torch.utils.data import DataLoader, Subset
 from torchsummary import summary
-import hydra
-from omegaconf import DictConfig, OmegaConf
+# import hydra
+# from omegaconf import DictConfig, OmegaConf
 from src.loss_function import energy_loss, dice_loss
 from src.dataset import get_load_data
 from src.dataloader import BasicDataset
@@ -64,7 +64,7 @@ def train(train_set, val_set, cfg, in_channels = 3, num_classes = 10):
         subset_indices = torch.randperm(len(train_set))[:cfg['train']['subset']]
         train_set = Subset(train_set, subset_indices)
     
-    train_dataloader = DataLoader(train_set, batch_size=6, shuffle = True)
+    train_dataloader = DataLoader(train_set, batch_size=1, shuffle = True)
 
     for epoch in range(cfg['train']['epochs']):
         print (f"Epoch {epoch + 1}:")
